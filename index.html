@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Выкуп52" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Выкуп52</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #f1f5f9;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    /* HERO */
+    .hero {
+      background: #0f172a;
+      padding: 56px 20px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: #1e40af;
+      opacity: 0.2;
+      top: -60px; right: -50px;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: #3b82f6;
+      opacity: 0.12;
+      bottom: -30px; left: 40px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e3a5f;
+      border: 0.5px solid #2563eb;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      color: #93c5fd;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+    }
+    .hero-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-title span { color: #3b82f6; }
+    .hero-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+    .hero-steps { display: flex; gap: 5px; margin-bottom: 6px; }
+    .hero-step {
+      flex: 1; height: 3px;
+      border-radius: 2px;
+      background: #1e293b;
+      transition: background 0.3s;
+    }
+    .hero-step.done { background: #22c55e; }
+    .hero-step.active { background: #3b82f6; }
+    .hero-stepl { font-size: 11px; color: #475569; }
+
+    /* CONTENT */
+    .screen { display: none; padding: 16px 16px 0; }
+    .screen.active { display: block; }
+
+    .sec-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      margin-top: 18px;
+    }
+    .sec-label:first-child { margin-top: 0; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .field { margin-bottom: 8px; }
+    .field label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748b;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 11px 13px;
+      font-size: 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #0f172a;
+      outline: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: #3b82f6; }
+
+    /* CRITERIA CARDS */
+    .crit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      margin-bottom: 8px;
+    }
+    .crit-left { display: flex; align-items: center; gap: 11px; }
+    .crit-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .crit-icon svg { width: 17px; height: 17px; }
+    .crit-name { font-size: 13px; font-weight: 600; color: #0f172a; }
+    .crit-hint { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+    .pip-row { display: flex; gap: 5px; }
+    .pip {
+      width: 28px; height: 28px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer;
+      color: #94a3b8;
+      background: #f8fafc;
+      transition: all 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pip.g { background: #dcfce7; border-color: #86efac; color: #15803d; }
+    .pip.y { background: #fef9c3; border-color: #fde047; color: #854d0e; }
+    .pip.r { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+    /* PRICE BLOCK */
+    .price-block {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .price-block-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #f8fafc;
+    }
+    .price-block-title { font-size: 12px; font-weight: 600; color: #64748b; }
+    .price-block-body { padding: 14px; }
+    .price-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .price-row input {
+      flex: 1;
+      padding: 12px 13px;
+      font-size: 18px;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #0f172a;
+      outline: none;
+    }
+    .price-row input:focus { border-color: #3b82f6; background: #fff; }
+    .price-rub { font-size: 18px; color: #64748b; font-weight: 600; }
+
+    /* BUTTONS */
+    .btn-ai {
+      width: 100%;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #2563eb;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-ai:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-ai-star {
+      width: 16px; height: 16px;
+      background: #3b82f6;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: #fff; flex-shrink: 0;
+    }
+    .btn-next {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      margin-top: 12px;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s;
+    }
+    .btn-next:active { opacity: 0.85; }
+    .btn-next.blue { background: #1d4ed8; color: #fff; }
+    .btn-next.outline {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* AI RESULT */
+    .ai-result {
+      margin-top: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .ai-r-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+    .ai-r-row:last-child { border: none; }
+    .ai-r-lbl { color: #64748b; }
+    .ai-r-val { font-weight: 600; color: #0f172a; }
+    .ai-r-comment {
+      padding: 9px 12px;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.5;
+      border-top: 1px solid #f1f5f9;
+      background: #fff;
+    }
+    .ai-loading {
+      padding: 12px;
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dots span {
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #3b82f6;
+      animation: blink 1.1s infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: .2s; }
+    .dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%,80%,100%{opacity:.15} 40%{opacity:1} }
+
+    /* RESULT */
+    .verdict {
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 10px;
+    }
+    .verdict.buy { background: #0f172a; }
+    .verdict.skip { background: #1a0505; }
+    .verdict-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .verdict-badge {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .verdict.buy .verdict-badge { background: #1e3a5f; color: #60a5fa; }
+    .verdict.skip .verdict-badge { background: #3b0a0a; color: #f87171; }
+    .verdict-ttl { font-size: 17px; font-weight: 700; color: #f8fafc; }
+    .verdict-sub { font-size: 12px; color: #94a3b8; margin-top: 3px; }
+    .verdict-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .vpill {
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .vpill.ok { background: #1e3a5f; color: #93c5fd; }
+    .vpill.warn { background: #2d1f06; color: #fbbf24; }
+    .vpill.bad { background: #3b0a0a; color: #f87171; }
+
+    .pricegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .pcard {
+      border-radius: 14px;
+      padding: 13px 14px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    .pcard.buyout { background: #052e16; border-color: #166534; }
+    .pc-lbl {
+      font-size: 10px; font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 5px;
+    }
+    .pcard.buyout .pc-lbl { color: #4ade80; }
+    .pc-val { font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.3; }
+    .pcard.buyout .pc-val { color: #86efac; }
+    .pc-sub { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+    .pcard.buyout .pc-sub { color: #4ade80; opacity: 0.7; }
+
+    .meter {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .meter-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .meter-ttl { font-size: 13px; font-weight: 600; color: #0f172a; }
+    .meter-score { font-size: 22px; font-weight: 700; color: #0f172a; }
+    .meter-score span { font-size: 14px; color: #94a3b8; font-weight: 400; }
+    .meter-track { height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; }
+    .meter-fill { height: 100%; border-radius: 5px; transition: width 0.7s cubic-bezier(.4,0,.2,1); }
+    .meter-labels { display: flex; justify-content: space-between; margin-top: 5px; font-size: 10px; color: #94a3b8; }
+
+    .detail-list {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .dl-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 11px 14px;
+      border-bottom: 1px solid #f8fafc;
+      font-size: 13px;
+    }
+    .dl-row:last-child { border: none; }
+    .dl-lbl { color: #64748b; }
+    .chip { padding: 3px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+    .chip.g { background: #dcfce7; color: #15803d; }
+    .chip.y { background: #fef9c3; color: #854d0e; }
+    .chip.r { background: #fee2e2; color: #991b1b; }
+    .chip.n { background: #f1f5f9; color: #94a3b8; }
+
+    .error-msg {
+      margin-top: 10px;
+      padding: 11px 13px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #be123c;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HERO HEADER -->
+  <div class="hero">
+    <div class="hero-badge"><div class="hero-badge-dot"></div>оценка авто</div>
+    <div class="hero-title">Выкуп<span>52</span></div>
+    <div class="hero-sub" id="hero-sub">Шаг 1 из 3 — параметры авто</div>
+    <div class="hero-steps">
+      <div class="hero-step active" id="hs1"></div>
+      <div class="hero-step" id="hs2"></div>
+      <div class="hero-step" id="hs3"></div>
+    </div>
+    <div class="hero-stepl" id="hero-stepl">Основные данные</div>
+  </div>
+
+  <!-- STEP 1: Параметры -->
+  <div class="screen active" id="s1">
+    <div class="sec-label">Марка и модель</div>
+    <div class="grid2">
+      <div class="field"><label>Марка</label><input id="f-make" placeholder="Toyota" /></div>
+      <div class="field"><label>Модель</label><input id="f-model" placeholder="Camry" /></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Год выпуска</label><input id="f-year" type="number" placeholder="2019" min="1990" max="2025" /></div>
+      <div class="field"><label>Пробег, км</label><input id="f-mileage" type="number" placeholder="87000" /></div>
+    </div>
+    <div class="sec-label">Технические данные</div>
+    <div class="grid2">
+      <div class="field"><label>Двигатель</label>
+        <select id="f-engine">
+          <option value="">— выбрать</option>
+          <option value="1.4–1.6 бензин">1.4–1.6 бензин</option>
+          <option value="1.8–2.0 бензин">1.8–2.0 бензин</option>
+          <option value="2.0–2.5 бензин">2.0–2.5 бензин</option>
+          <option value="2.5+ бензин">2.5+ бензин</option>
+          <option value="1.5–2.0 дизель">1.5–2.0 дизель</option>
+          <option value="2.0+ дизель">2.0+ дизель</option>
+          <option value="гибрид">Гибрид</option>
+          <option value="электро">Электро</option>
+        </select>
+      </div>
+      <div class="field"><label>Коробка</label>
+        <select id="f-tx">
+          <option value="">— выбрать</option>
+          <option value="АКПП">АКПП</option>
+          <option value="МКПП">МКПП</option>
+          <option value="Вариатор">Вариатор</option>
+          <option value="Робот (DSG)">Робот (DSG)</option>
+        </select>
+      </div>
+    </div>
+    <div class="sec-label">История и кузов</div>
+    <div class="grid2">
+      <div class="field"><label>Владельцев по ПТС</label>
+        <select id="f-owners">
+          <option value="1">1 владелец</option>
+          <option value="2">2 владельца</option>
+          <option value="3">3 владельца</option>
+          <option value="4">4 и более</option>
+        </select>
+      </div>
+      <div class="field"><label>Крашеных элементов</label>
+        <select id="f-painted">
+          <option value="0">0 — чистый</option>
+          <option value="1">1 элемент</option>
+          <option value="2">2 элемента</option>
+          <option value="3">3 элемента</option>
+          <option value="4">4 элемента</option>
+          <option value="5">5 и более</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-next blue" onclick="toStep(2)">Далее — состояние авто →</button>
+  </div>
+
+  <!-- STEP 2: Состояние + цена -->
+  <div class="screen" id="s2">
+    <div class="sec-label">Оцените по 5 критериям</div>
+
+    <div class="crit-row">
+      <div class="crit-left">
+        <div class="crit-icon" style="background:#eff6ff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <div><div class="crit-name">Кузов</div><div class="crit-hint" id="cv-body">не оценен</div></div>
+      </div>
+      <div class="pip-row" id="st-body"></div>
+    </div>
+
+    <div class="crit-row">
+      <div class="crit-left">
+        <div class="crit-icon" style="background:#f0fdf4">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </div>
+        <div><div class="crit-name">Техника</div><div class="crit-hint" id="cv-tech">не оценено</div></div>
+      </div>
+      <div class="pip-row" id="st-tech"></div>
+    </div>
+
+    <div class="crit-row">
+      <div class="crit-left">
+        <div class="crit-icon" style="background:#fff7ed">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div><div class="crit-name">Салон</div><div class="crit-hint" id="cv-salon">не оценен</div></div>
+      </div>
+      <div class="pip-row" id="st-salon"></div>
+    </div>
+
+    <div class="crit-row">
+      <div class="crit-left">
+        <div class="crit-icon" style="background:#f5f3ff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <div><div class="crit-name">Юридическая</div><div class="crit-hint" id="cv-legal">не оценена</div></div>
+      </div>
+      <div class="pip-row" id="st-legal"></div>
+    </div>
+
+    <div class="crit-row">
+      <div class="crit-left">
+        <div class="crit-icon" style="background:#fdf2f8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </div>
+        <div><div class="crit-name">Ликвидность</div><div class="crit-hint" id="cv-liquid">не оценена</div></div>
+      </div>
+      <div class="pip-row" id="st-liquid"></div>
+    </div>
+
+    <div class="sec-label" style="margin-top:20px">Рыночная цена</div>
+    <div class="price-block">
+      <div class="price-block-head">
+        <div class="price-block-title">Средняя цена на рынке</div>
+      </div>
+      <div class="price-block-body">
+        <div class="price-row">
+          <input id="f-price" type="number" placeholder="0" inputmode="numeric" />
+          <span class="price-rub">₽</span>
+        </div>
+        <button class="btn-ai" id="btn-ai" onclick="fetchMarketPrice()">
+          <div class="btn-ai-star">✦</div>
+          Узнать цену через AI
+        </button>
+        <div id="ai-box-area"></div>
+      </div>
+    </div>
+    <button class="btn-next blue" onclick="toStep(3)">Рассчитать стоимость выкупа →</button>
+  </div>
+
+  <!-- STEP 3: Результат -->
+  <div class="screen" id="s3">
+    <div id="result-content"></div>
+    <button class="btn-next outline" onclick="toStep(1, true)">← Новая оценка</button>
+  </div>
+
+</div>
+
+<script>
+  // --- СОСТОЯНИЕ ---
+  const sc = { body:0, tech:0, salon:0, legal:0, liquid:0 };
+  const txt = {
+    body:    ['Аварийный','Много дефектов','Средний','Хороший','Отличный'],
+    tech:    ['Не на ходу','Много проблем','Замечания есть','Хорошее','Отличное'],
+    salon:   ['Убит','Плохой','Средний','Хороший','Идеальный'],
+    legal:   ['Арест/залог','Серьёзные риски','Под вопросом','Чистая','Полностью чистая'],
+    liquid:  ['Неликвид','Продаётся плохо','Средняя','Хорошая','Высокая']
+  };
+  const heroSubs  = ['Шаг 1 из 3 — параметры авто', 'Шаг 2 из 3 — состояние и цена', 'Шаг 3 из 3 — результат оценки'];
+  const heroLabels = ['Основные данные', 'Состояние и цена', 'Результат'];
+
+  // --- ПИПЫ ---
+  function initPips() {
+    ['body','tech','salon','legal','liquid'].forEach(k => {
+      const el = document.getElementById('st-' + k);
+      el.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const p = document.createElement('div');
+        p.className = 'pip'; p.textContent = i;
+        p.onclick = () => setPip(k, i);
+        el.appendChild(p);
+      }
+    });
+  }
+
+  function setPip(k, v) {
+    sc[k] = v;
+    document.getElementById('st-' + k).querySelectorAll('.pip').forEach((p, i) => {
+      const n = i + 1;
+      p.className = 'pip' + (n <= v ? (v >= 4 ? ' g' : v >= 3 ? ' y' : ' r') : '');
+    });
+    document.getElementById('cv-' + k).textContent = txt[k][v - 1];
+  }
+
+  // --- НАВИГАЦИЯ ---
+  function toStep(n, reset) {
+    if (reset) {
+      ['f-make','f-model','f-year','f-mileage','f-price'].forEach(id => document.getElementById(id).value = '');
+      ['f-engine','f-tx','f-owners','f-painted'].forEach(id => document.getElementById(id).selectedIndex = 0);
+      Object.keys(sc).forEach(k => sc[k] = 0);
+      initPips();
+      ['body','tech','salon','legal','liquid'].forEach(k => {
+        document.getElementById('cv-' + k).textContent = k === 'legal' || k === 'liquid' ? 'не оценена' : 'не оценен';
+      });
+      document.getElementById('ai-box-area').innerHTML = '';
+    }
+    [1, 2, 3].forEach(i => {
+      document.getElementById('s' + i).className = 'screen' + (i === n ? ' active' : '');
+      document.getElementById('hs' + i).className = 'hero-step' + (i < n ? ' done' : i === n ? ' active' : '');
+    });
+    document.getElementById('hero-sub').textContent = heroSubs[n - 1];
+    document.getElementById('hero-stepl').textContent = heroLabels[n - 1];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (n === 3) buildResult();
+  }
+
+  // --- AI ЦЕНА ---
+  async function fetchMarketPrice() {
+    const make    = document.getElementById('f-make').value.trim();
+    const model   = document.getElementById('f-model').value.trim();
+    const year    = document.getElementById('f-year').value.trim();
+    const mileage = document.getElementById('f-mileage').value.trim();
+    const engine  = document.getElementById('f-engine').value;
+    const tx      = document.getElementById('f-tx').value;
+
+    if (!make || !model) {
+      document.getElementById('ai-box-area').innerHTML =
+        '<div class="error-msg">Укажите марку и модель на шаге 1</div>';
+      return;
+    }
+
+    const btn = document.getElementById('btn-ai');
+    btn.disabled = true;
+    document.getElementById('ai-box-area').innerHTML =
+      '<div class="ai-loading"><span class="dots"><span></span><span></span><span></span></span> Анализирую рынок…</div>';
+
+    const prompt = `Ты эксперт по вторичному рынку автомобилей России. Найди актуальные цены на вторичном рынке для:
+${make} ${model}${year ? ', ' + year + ' г.' : ''}${mileage ? ', пробег ~' + mileage + ' км' : ''}${engine ? ', ' + engine : ''}${tx ? ', ' + tx : ''}
+Используй веб-поиск для поиска актуальных объявлений о продаже этого авто на российском рынке.
+Ответь СТРОГО в таком формате (только эти строки, никакого другого текста):
+МИН: [число]
+МАКС: [число]
+СРЕДНЯЯ: [число]
+ЛИКВИДНОСТЬ: [высокая/средняя/низкая]
+КОММЕНТАРИЙ: [одно короткое предложение об этой модели на рынке]`;
+
+    try {
+      const r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 400,
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+      const d = await r.json();
+      const text = d.content.filter(b => b.type === "text").map(b => b.text).join("\n");
+
+      const g  = key => { const m = text.match(new RegExp(key + ':\\s*([\\d]+)')); return m ? parseInt(m[1]) : null; };
+      const gs = key => { const m = text.match(new RegExp(key + ':\\s*([^\\n]+')); return m ? m[1].trim() : ''; };
+
+      const mn  = g('МИН'), mx = g('МАКС'), avg = g('СРЕДНЯЯ');
+      const liq = gs('ЛИКВИДНОСТЬ'), comm = gs('КОММЕНТАРИЙ');
+      const fmt = v => v ? v.toLocaleString('ru-RU') + ' ₽' : '—';
+
+      if (avg && !document.getElementById('f-price').value)
+        document.getElementById('f-price').value = avg;
+
+      let html = '<div class="ai-result">';
+      if (mn || mx) html += `<div class="ai-r-row"><span class="ai-r-lbl">Диапазон цен</span><span class="ai-r-val">${fmt(mn)} — ${fmt(mx)}</span></div>`;
+      if (avg)      html += `<div class="ai-r-row"><span class="ai-r-lbl">Средняя по рынку</span><span class="ai-r-val" style="color:#16a34a;font-size:15px">${fmt(avg)}</span></div>`;
+      if (liq)      html += `<div class="ai-r-row"><span class="ai-r-lbl">Ликвидность</span><span class="ai-r-val">${liq}</span></div>`;
+      if (comm)     html += `<div class="ai-r-comment">${comm}</div>`;
+      html += '</div>';
+      document.getElementById('ai-box-area').innerHTML = html;
+
+    } catch (e) {
+      document.getElementById('ai-box-area').innerHTML =
+        '<div class="error-msg">Ошибка запроса. Введите цену вручную.</div>';
+    }
+    btn.disabled = false;
+  }
+
+  // --- РЕЗУЛЬТАТ ---
+  function buildResult() {
+    const make    = document.getElementById('f-make').value    || 'Авто';
+    const model   = document.getElementById('f-model').value   || '';
+    const year    = document.getElementById('f-year').value    || '';
+    const mileage = document.getElementById('f-mileage').value;
+    const engine  = document.getElementById('f-engine').value  || '';
+    const tx      = document.getElementById('f-tx').value      || '';
+    const owners  = parseInt(document.getElementById('f-owners').value)  || 1;
+    const painted = parseInt(document.getElementById('f-painted').value) || 0;
+    const mp      = parseInt(document.getElementById('f-price').value)   || 0;
+
+    const plusses = [sc.body>=4, sc.tech>=4, sc.salon>=4, sc.legal>=4, sc.liquid>=4].filter(Boolean).length;
+    const avgSc   = (sc.body + sc.tech + sc.salon + sc.legal + sc.liquid) / 5;
+    const buy     = plusses >= 3 && avgSc >= 2.5;
+
+    let disc = 0.20;
+    if (painted >= 3) disc += 0.03;
+    if (painted >= 5) disc += 0.04;
+    if (owners  >= 3) disc += 0.03;
+    if (owners  >= 4) disc += 0.03;
+    if (mileage && parseInt(mileage) > 150000) disc += 0.03;
+    if (sc.tech  <= 2) disc += 0.05;
+    if (sc.body  <= 2) disc += 0.03;
+    if (sc.legal <= 2) disc += 0.05;
+    disc = Math.min(disc, 0.40);
+
+    const fmt    = v => v > 0 ? v.toLocaleString('ru-RU') + ' ₽' : '—';
+    const buyMax = mp > 0 ? Math.round(mp * 0.80 / 1000) * 1000 : 0;
+    const buyMin = mp > 0 ? Math.round(mp * (1 - disc) / 1000) * 1000 : 0;
+    const profMin = mp > 0 ? Math.round((mp - buyMax) * 0.85 / 1000) * 1000 : 0;
+    const profMax = mp > 0 ? Math.round((mp - buyMin) * 0.85 / 1000) * 1000 : 0;
+    const pct    = Math.round((plusses / 5) * 100);
+    const mColor = plusses >= 4 ? '#22c55e' : plusses >= 3 ? '#86efac' : plusses >= 2 ? '#fbbf24' : '#f87171';
+
+    const factors = [];
+    if (painted >= 3) factors.push({ l: `${painted} краш. эл.`, c: 'warn' });
+    if (owners  >= 3) factors.push({ l: `${owners} хозяина`, c: 'warn' });
+    if (owners  >= 4) factors.push({ l: 'много владельцев', c: 'bad' });
+    if (mileage && parseInt(mileage) > 150000) factors.push({ l: 'пробег >150к', c: 'warn' });
+    if (sc.tech  <= 2) factors.push({ l: 'плохая техника', c: 'bad' });
+    if (sc.legal <= 2) factors.push({ l: 'юр. риски', c: 'bad' });
+    if (factors.length === 0) factors.push({ l: 'базовый дисконт −20%', c: 'ok' });
+
+    const pillsHtml = factors.map(f => `<div class="vpill ${f.c}">${f.l}</div>`).join('');
+
+    const scoreRows = [
+      { n: 'Кузов', k: 'body' }, { n: 'Техника', k: 'tech' },
+      { n: 'Салон', k: 'salon' }, { n: 'Юридическая', k: 'legal' }, { n: 'Ликвидность', k: 'liquid' }
+    ].map(({ n, k }) => {
+      const v = sc[k];
+      const c = v >= 4 ? 'g' : v >= 3 ? 'y' : v > 0 ? 'r' : 'n';
+      return `<div class="dl-row"><span class="dl-lbl">${n}</span><span class="chip ${c}">${v > 0 ? txt[k][v - 1] : '—'}</span></div>`;
+    }).join('');
+
+    document.getElementById('result-content').innerHTML = `
+      <div class="verdict ${buy ? 'buy' : 'skip'}">
+        <div class="verdict-top">
+          <div class="verdict-badge">${buy ? '✓' : '✗'}</div>
+          <div>
+            <div class="verdict-ttl">${buy ? 'Рекомендуется к выкупу' : 'Не рекомендуется'}</div>
+            <div class="verdict-sub">${plusses} из 5 критериев в плюсе · дисконт ${Math.round(disc * 100)}%</div>
+          </div>
+        </div>
+        <div class="verdict-pills">${pillsHtml}</div>
+      </div>
+
+      <div style="font-size:12px;color:#64748b;margin-bottom:10px">
+        ${make} ${model}${year ? ' · ' + year + ' г.' : ''}${mileage ? ' · ' + parseInt(mileage).toLocaleString('ru-RU') + ' км' : ''}${engine ? ' · ' + engine : ''}${tx ? ' · ' + tx : ''}
+      </div>
+
+      <div class="pricegrid">
+        <div class="pcard">
+          <div class="pc-lbl">Рынок</div>
+          <div class="pc-val">${fmt(mp)}</div>
+          <div class="pc-sub">средняя цена</div>
+        </div>
+        <div class="pcard buyout">
+          <div class="pc-lbl">Выкупать за</div>
+          <div class="pc-val">${mp > 0 ? fmt(buyMin) + '<br>— ' + fmt(buyMax) : 'нет цены'}</div>
+          <div class="pc-sub">−${Math.round(disc * 100)}% … −20%</div>
+        </div>
+      </div>
+
+      ${mp > 0 ? `<div class="pricegrid">
+        <div class="pcard">
+          <div class="pc-lbl">Потенциал прибыли</div>
+          <div class="pc-val">${fmt(profMin)}<br>— ${fmt(profMax)}</div>
+          <div class="pc-sub">после расходов ~15%</div>
+        </div>
+        <div class="pcard">
+          <div class="pc-lbl">Надбавка к скидке</div>
+          <div class="pc-val">+${Math.round((disc - 0.20) * 100)}%</div>
+          <div class="pc-sub">к базовым −20%</div>
+        </div>
+      </div>` : ''}
+
+      <div class="meter">
+        <div class="meter-head">
+          <div class="meter-ttl">Общий балл</div>
+          <div class="meter-score">${plusses}<span>/5</span></div>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" style="width:${pct}%;background:${mColor}"></div>
+        </div>
+        <div class="meter-labels"><span>плохо</span><span>средне</span><span>отлично</span></div>
+      </div>
+
+      <div class="detail-list">
+        ${scoreRows}
+        <div class="dl-row"><span class="dl-lbl">Крашеных элементов</span><span class="chip ${painted <= 1 ? 'g' : painted <= 3 ? 'y' : 'r'}">${painted}</span></div>
+        <div class="dl-row"><span class="dl-lbl">Владельцев по ПТС</span><span class="chip ${owners <= 1 ? 'g' : owners <= 2 ? 'y' : 'r'}">${owners}</span></div>
+      </div>
+    `;
+  }
+
+  // --- INIT ---
+  initPips();
+
+  // --- SERVICE WORKER ---
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
