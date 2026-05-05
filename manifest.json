@@ -1,8 +1,9 @@
 {
   "name": "Выкуп52",
   "short_name": "Выкуп52",
-  "description": "Оценка автомобиля для выкупа — инструмент перекупщика",
-  "start_url": "/",
+  "description": "Оценка автомобиля для выкупа",
+  "start_url": "/Vikup52/",
+  "scope": "/Vikup52/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
@@ -21,6 +22,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["utilities", "business"]
+  ]
 }
